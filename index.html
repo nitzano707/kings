@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מלכי ישראל ויהודה - ציר זמן אינטראקטיבי ומשחק</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Heebo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f4f1e8 0%, #e8dcc0 25%, #d4c5a0 50%, #c9b885 75%, #b8a572 100%);
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(160, 82, 45, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(205, 133, 63, 0.04) 0%, transparent 60%),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.02) 2px,
+                    rgba(139, 69, 19, 0.02) 4px
+                );
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at top left, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(160, 82, 45, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at center, rgba(205, 133, 63, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .israel-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+        
+        .judah-gradient {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .card-hover:hover::before {
+            left: 100%;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        .timeline-line {
+            position: relative;
+        }
+        
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            right: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #3b82f6, #ef4444);
+            transform: translateX(50%);
+        }
+        
+        .king-card {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+        }
+        
+        .lifeline-used {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .answer-correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            animation: correctPulse 0.5s ease;
+        }
+        
+        .answer-wrong {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: wrongShake 0.5s ease;
+        }
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .money-ladder {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+        }
+        
+        .current-question {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .safe-haven {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .player-name-input {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+        
+        .game-rules {
+            background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+        }
+        
+        .summary-correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .summary-wrong {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .share-button {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+        
+        .section-bg {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-bg {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Floating Particles Background -->
+    <div class="floating-particles" id="particles-container"></div>
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-2">👑 מלכי ישראל ויהודה 👑</h1>
+            <p class="text-xl opacity-90">ציר זמן אינטראקטיבי ומשחק "מי רוצה להיות מיליונר"</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-bg shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center space-x-8 py-4">
+                <button onclick="showTimeline()" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors">
+                    📜 ציר הזמן
+                </button>
+                <button onclick="showGame()" class="nav-btn bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg transition-colors">
+                    🎯 משחק המיליונר
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Timeline Section -->
+    <section id="timeline-section" class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">ציר הזמן של מלכי ישראל ויהודה</h2>
+                <div class="flex justify-center space-x-8 mb-8">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 israel-gradient rounded-full ml-2"></div>
+                        <span class="text-blue-600 font-semibold">ממלכת ישראל</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 judah-gradient rounded-full ml-2"></div>
+                        <span class="text-red-600 font-semibold">ממלכת יהודה</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 gold-gradient rounded-full ml-2"></div>
+                        <span class="text-yellow-600 font-semibold">ממלכה מאוחדת</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-line max-w-4xl mx-auto" id="timeline-container">
+                <!-- Kings will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Section -->
+    <section id="game-section" class="py-12 hidden">
+        <div class="container mx-auto px-4">
+            <!-- Player Name Input Screen -->
+            <div id="player-setup" class="text-center max-w-2xl mx-auto">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">🎯 מי רוצה להיות מיליונר?</h2>
+                <p class="text-xl text-gray-600 mb-8">בדקו את הידע שלכם על מלכי ישראל ויהודה!</p>
+                
+                <div class="game-card rounded-xl shadow-lg p-8 mb-6">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">👤 הכירו את עצמכם</h3>
+                    <input type="text" id="player-name" placeholder="הכניסו את השם שלכם..." 
+                           class="w-full p-4 text-xl text-center rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:outline-none mb-4"
+                           maxlength="20">
+                    <p class="text-gray-600">השם יופיע בתוצאות המשחק</p>
+                </div>
+
+                <div class="game-card rounded-xl shadow-lg p-8 mb-8">
+                    <h3 class="text-2xl font-bold mb-6 text-gray-800">📋 חוקי המשחק</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-right">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-end">
+                                <span class="text-gray-700">10 שאלות בסך הכל</span>
+                                <span class="text-2xl mr-3">❓</span>
+                            </div>
+                            <div class="flex items-center justify-end">
+                                <span class="text-gray-700">3 עזרים זמינים</span>
+                                <span class="text-2xl mr-3">🆘</span>
+                            </div>
+                            <div class="flex items-center justify-end">
+                                <span class="text-gray-700">נקודות ביטחון בשאלות 5 ו-10</span>
+                                <span class="text-2xl mr-3">🛡️</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-end">
+                                <span class="text-gray-700">אפשרות לעזוב בכל שלב</span>
+                                <span class="text-2xl mr-3">🚪</span>
+                            </div>
+                            <div class="flex items-center justify-end">
+                                <span class="text-gray-700">פרס מקסימלי: מיליון שקל!</span>
+                                <span class="text-2xl mr-3">💰</span>
+                            </div>
+                            <div class="flex items-center justify-end">
+                                <span class="text-gray-700">3 רמות קושי</span>
+                                <span class="text-2xl mr-3">📈</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-white bg-opacity-50 rounded-lg">
+                        <h4 class="font-bold text-gray-800 mb-2">💡 העזרים שלכם:</h4>
+                        <div class="flex justify-center space-x-6 text-sm">
+                            <span class="bg-blue-100 px-3 py-1 rounded-full">✂️ 50:50</span>
+                            <span class="bg-green-100 px-3 py-1 rounded-full">👥 שאלת קהל</span>
+                            <span class="bg-purple-100 px-3 py-1 rounded-full">📞 טלפון לחבר</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="startGameWithName()" class="gold-gradient text-black font-bold text-xl px-12 py-4 rounded-xl hover:scale-105 transition-transform shadow-lg">
+                    🚀 התחל משחק!
+                </button>
+            </div>
+
+            <!-- Game Start Screen -->
+            <div id="game-start" class="text-center max-w-2xl mx-auto hidden">
+                <div class="game-card rounded-xl shadow-lg p-8 mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">🎮 מוכנים להתחיל?</h2>
+                    <p id="welcome-message" class="text-xl text-gray-600 mb-6"></p>
+                    <p class="text-lg text-gray-500 mb-6">בהצלחה במשחק! זכרו - אתם יכולים לעזוב בכל שלב עם הכסף שזכיתם.</p>
+                </div>
+                <button onclick="startGame()" class="gold-gradient text-black font-bold text-xl px-12 py-4 rounded-xl hover:scale-105 transition-transform shadow-lg">
+                    ▶️ בואו נתחיל!
+                </button>
+            </div>
+
+            <!-- Game Play Screen -->
+            <div id="game-play" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                    <!-- Money Ladder -->
+                    <div class="lg:col-span-1">
+                        <div class="money-ladder rounded-xl p-4 text-white sticky top-24">
+                            <h3 class="text-lg font-bold mb-4 text-center">💰 סולם הפרסים</h3>
+                            <div id="money-ladder" class="space-y-1">
+                                <!-- Money ladder will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Area -->
+                    <div class="lg:col-span-3">
+                        <!-- Question Area -->
+                        <div class="game-card rounded-xl shadow-lg p-8 mb-6">
+                            <div class="text-center mb-6">
+                                <span id="question-number" class="text-lg font-semibold text-gray-600">שאלה 1 מתוך 10</span>
+                            </div>
+                            <h3 id="question-text" class="text-2xl font-bold text-gray-800 mb-8 text-center leading-relaxed">
+                                <!-- Question will appear here -->
+                            </h3>
+                            <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Answers will appear here -->
+                            </div>
+                        </div>
+
+                        <!-- Lifelines -->
+                        <div class="game-card rounded-xl shadow-lg p-6 mb-6">
+                            <h4 class="text-lg font-bold mb-4 text-center">🆘 עזרים</h4>
+                            <div class="flex justify-center space-x-4">
+                                <button id="lifeline-5050" onclick="use5050()" class="lifeline-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                    ✂️ 50:50
+                                </button>
+                                <button id="lifeline-audience" onclick="useAudience()" class="lifeline-btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                    👥 שאלת קהל
+                                </button>
+                                <button id="lifeline-phone" onclick="usePhone()" class="lifeline-btn bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                    📞 טלפון לחבר
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Game Controls -->
+                        <div class="text-center">
+                            <button onclick="showWalkAwayConfirm()" class="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-lg transition-colors mr-4">
+                                🚪 עזוב עם הכסף
+                            </button>
+                            <button onclick="finalAnswer()" id="final-answer-btn" class="gold-gradient text-black font-bold px-8 py-3 rounded-lg hover:scale-105 transition-transform disabled:opacity-50 pulse-glow" disabled>
+                                ✅ תשובה סופית!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="game-over" class="hidden text-center max-w-4xl mx-auto">
+                <div class="game-card rounded-xl shadow-lg p-8">
+                    <h2 id="game-over-title" class="text-3xl font-bold mb-4">🎉 כל הכבוד!</h2>
+                    <p id="game-over-message" class="text-xl text-gray-600 mb-6"></p>
+                    <div id="final-score" class="text-4xl font-bold gold-gradient bg-clip-text text-transparent mb-8"></div>
+                    
+                    <!-- Game Summary -->
+                    <div id="game-summary" class="mb-8">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-800">📊 סיכום המשחק</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="summary-correct text-white p-4 rounded-lg">
+                                <h4 class="text-xl font-bold mb-2">✅ תשובות נכונות</h4>
+                                <div id="correct-count" class="text-3xl font-bold mb-2">0</div>
+                                <div id="correct-list" class="text-sm space-y-1">
+                                    <!-- Correct answers will be listed here -->
+                                </div>
+                            </div>
+                            <div class="summary-wrong text-white p-4 rounded-lg">
+                                <h4 class="text-xl font-bold mb-2">❌ תשובות שגויות</h4>
+                                <div id="wrong-count" class="text-3xl font-bold mb-2">0</div>
+                                <div id="wrong-list" class="text-sm space-y-1">
+                                    <!-- Wrong answers will be listed here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Detailed Results -->
+                        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                            <h4 class="text-lg font-bold mb-4 text-gray-800">📝 פירוט השאלות</h4>
+                            <div id="detailed-results" class="space-y-3 max-h-60 overflow-y-auto">
+                                <!-- Detailed results will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <button onclick="copyResults()" class="share-button text-white font-bold px-8 py-3 rounded-lg hover:scale-105 transition-transform w-full md:w-auto">
+                            📋 העתק תוצאות
+                        </button>
+                        <div class="space-x-4">
+                            <button onclick="playAgain()" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition-colors">
+                                🔄 שחק שוב
+                            </button>
+                            <button onclick="showTimeline()" class="bg-purple-500 hover:bg-purple-600 text-white px-8 py-3 rounded-lg transition-colors">
+                                📜 חזור לציר הזמן
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- King Details Modal -->
+    <div id="king-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modal-king-name" class="text-2xl font-bold"></h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                </div>
+                <div id="modal-content">
+                    <!-- Modal content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lifeline Modals -->
+    <div id="audience-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 class="text-xl font-bold mb-4 text-center">👥 שאלת קהל</h3>
+            <div id="audience-results" class="space-y-2 mb-6">
+                <!-- Audience results will appear here -->
+            </div>
+            <button onclick="closeAudienceModal()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg">
+                סגור
+            </button>
+        </div>
+    </div>
+
+    <div id="phone-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 class="text-xl font-bold mb-4 text-center">📞 טלפון לחבר</h3>
+            <div class="text-center mb-6">
+                <p class="text-lg mb-4">החבר שלך אומר:</p>
+                <div id="phone-advice" class="bg-gray-100 p-4 rounded-lg italic">
+                    <!-- Phone advice will appear here -->
+                </div>
+            </div>
+            <button onclick="closePhoneModal()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg">
+                סגור
+            </button>
+        </div>
+    </div>
+
+    <!-- Walk Away Confirmation Modal -->
+    <div id="walkaway-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="game-card rounded-xl max-w-md w-full p-6">
+            <h3 class="text-2xl font-bold mb-4 text-center text-gray-800">🤔 בטוח שרוצה לעזוב?</h3>
+            <div class="text-center mb-6">
+                <p class="text-lg mb-4 text-gray-700">אתה עומד לעזוב עם:</p>
+                <div id="walkaway-amount" class="text-3xl font-bold gold-gradient bg-clip-text text-transparent glow-effect p-4 rounded-lg">
+                    <!-- Current winnings will appear here -->
+                </div>
+                <p class="text-sm text-gray-600 mt-4">אם תמשיך ותטעה, תחזור לנקודת הביטחון האחרונה</p>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="confirmWalkAway()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-bold transition-colors">
+                    🚪 כן, עזוב
+                </button>
+                <button onclick="closeWalkAwayModal()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-colors">
+                    🎯 המשך לשחק
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Kings data
+        const kings = [
+            {
+                name: "שאול",
+                kingdom: "united",
+                period: "1050-1010 לפנה\"ס",
+                reign: "40 שנה",
+                description: "המלך הראשון של ישראל",
+                details: "שאול בן קיש מבנימין נבחר למלך על ידי הנביא שמואל. הוא היה גבוה קומה ויפה תואר. ניצח את העמונים והפלשתים, אך בסופו של דבר נדחה מהמלכות בגלל אי-ציות לה'. נפל במלחמה בהר הגלבוע יחד עם בניו יהונתן, אבינדב ומלכישוע.",
+                achievements: ["ניצח את העמונים", "הקים צבא קבוע", "איחד את השבטים"]
+            },
+            {
+                name: "דוד",
+                kingdom: "united",
+                period: "1010-970 לפנה\"ס",
+                reign: "40 שנה",
+                description: "המלך הגדול, כובש ירושלים",
+                details: "דוד בן ישי מבית לחם, הרועה שהפך למלך. כבש את ירושלים והפך אותה לבירת ישראל. כתב תהילים רבים, ניצח את הפלשתים וכבש ממלכות רבות. הקים אימפריה גדולה מהפרת ועד נחל מצרים. ה' הבטיח לו שמלכותו תהיה נצחית.",
+                achievements: ["כבש את ירושלים", "הקים אימפריה גדולה", "כתב תהילים", "ניצח את גלית"]
+            },
+            {
+                name: "שלמה",
+                kingdom: "united",
+                period: "970-930 לפנה\"ס",
+                reign: "40 שנה",
+                description: "המלך החכם, בונה בית המקדש",
+                details: "שלמה בן דוד, המלך החכם ביותר שהיה. בנה את בית המקדש הראשון בירושלים ואת ארמון המלך. פיתח סחר בינלאומי ויצר ברית עם מצרים. כתב משלים, קהלת ושיר השירים. בתקופתו הגיעה ישראל לשיא הכוח והעושר, אך בסוף ימיו סטה אחרי אלילים.",
+                achievements: ["בנה את בית המקדש", "פיתח סחר בינלאומי", "כתב ספרי חכמה", "הביא שלום ושגשוג"]
+            },
+            {
+                name: "רחבעם",
+                kingdom: "judah",
+                period: "930-913 לפנה\"ס",
+                reign: "17 שנה",
+                description: "מלך יהודה הראשון אחרי הפיצול",
+                details: "רחבעם בן שלמה, בתקופתו התפצלה הממלכה לשתיים. סירב להקל על העול שהטיל אביו על העם, מה שגרם למרד עשרת השבטים. נשאר עם שבטי יהודה ובנימין בלבד. נלחם מלחמות רבות עם ירבעם מלך ישראל.",
+                achievements: ["שמר על ירושלים ובית המקדש", "חיזק את ערי יהודה"]
+            },
+            {
+                name: "ירבעם הראשון",
+                kingdom: "israel",
+                period: "930-909 לפנה\"ס",
+                reign: "22 שנה",
+                description: "מלך ישראל הראשון אחרי הפיצול",
+                details: "ירבעם בן נבט מאפרים, הוביל את המרד נגד רחבעם והקים את ממלכת ישראל הצפונית. הקים מקדשים בדן ובבית אל עם עגלי זהב כדי למנוע מהעם לעלות לירושלים. הנביא אחיה השילוני ניבא לו על המלכות, אך גם על חורבנה בגלל חטא העגלים.",
+                achievements: ["הקים את ממלכת ישראל", "בנה את שכם כבירה", "חיזק את הצבא"]
+            },
+            {
+                name: "אביה (אביים)",
+                kingdom: "judah",
+                period: "913-911 לפנה\"ס",
+                reign: "3 שנה",
+                description: "מלך יהודה, נלחם נגד ירבעם",
+                details: "אביה בן רחבעם, מלך זמן קצר אך ניצח ניצחון גדול על ירבעם מלך ישראל בהר צמרים. בנאומו הזכיר את ברית ה' עם דוד ואת חשיבות בית המקדש. למרות הניצחון, המשיך בדרכי אביו ולא הסיר את הבמות.",
+                achievements: ["ניצח את ירבעם במלחמה", "חיזק את מעמד יהודה"]
+            },
+            {
+                name: "אסא",
+                kingdom: "judah",
+                period: "911-870 לפנה\"ס",
+                reign: "41 שנה",
+                description: "מלך צדיק, הסיר את האלילים",
+                details: "אסא בן אביה, מלך צדיק שעשה הישר בעיני ה'. הסיר את האלילים והבמות, גירש את הקדשים והוריד את מעכה אמו מגדולה בגלל אלילה. ניצח את זרח הכושי בעזרת ה'. בסוף ימיו חטא כשהסתמך על מלך ארם במקום על ה'.",
+                achievements: ["הסיר את האלילים", "ניצח את זרח הכושי", "חיזק את הדת", "בנה ערי מצור"]
+            },
+            {
+                name: "נדב",
+                kingdom: "israel",
+                period: "909-908 לפנה\"ס",
+                reign: "2 שנה",
+                description: "מלך ישראל, נרצח על ידי בעשא",
+                details: "נדב בן ירבעם, המשיך בדרכי אביו הרעות. מלך זמן קצר מאוד ונרצח על ידי בעשא בן אחיה בזמן מצור על גבתון. בעשא השמיד את כל בית ירבעם כפי שניבא הנביא אחיה השילוני.",
+                achievements: ["המשיך את מדיניות אביו"]
+            },
+            {
+                name: "בעשא",
+                kingdom: "israel",
+                period: "908-886 לפנה\"ס",
+                reign: "24 שנה",
+                description: "מלך ישראל, השמיד את בית ירבעם",
+                details: "בעשא בן אחיה מיששכר, הרג את נדב והשמיד את כל בית ירבעם. העביר את הבירה לתרצה. נלחם מלחמות רבות עם יהודה ובנה את הרמה כדי לחסום את הגישה לירושלים. הנביא יהוא בן חנני ניבא נגדו על חטאיו.",
+                achievements: ["חיסל את שושלת ירבעם", "חיזק את ממלכת ישראל", "בנה את הרמה"]
+            },
+            {
+                name: "יהושפט",
+                kingdom: "judah",
+                period: "870-848 לפנה\"ס",
+                reign: "25 שנה",
+                description: "מלך צדיק, חיזק את המשפט",
+                details: "יהושפט בן אסא, מלך צדיק שהלך בדרכי ה'. הקים מערכת משפט מסודרת ושלח לויים ללמד תורה בערי יהודה. כרת ברית עם אחאב מלך ישראל, מה שהביא לבעיות. ניצח את מואב ועמון בעזרת ה' כשהעם שר ושיבח.",
+                achievements: ["הקים מערכת משפט", "חיזק את לימוד התורה", "ניצח את מואב ועמון", "פיתח סחר ימי"]
+            },
+            {
+                name: "אלה",
+                kingdom: "israel",
+                period: "886-885 לפנה\"ס",
+                reign: "2 שנה",
+                description: "מלך ישראל, נרצח על ידי זמרי",
+                details: "אלה בן בעשא, המשיך בדרכי אביו הרעות. מלך זמן קצר מאוד ונרצח על ידי זמרי, שר המחצית מרכבו, בזמן שהיה שיכור בבית ארצא בתרצה. זמרי השמיד את כל בית בעשא כפי שניבא הנביא יהוא.",
+                achievements: ["המשיך את מדיניות אביו"]
+            },
+            {
+                name: "זמרי",
+                kingdom: "israel",
+                period: "885 לפנה\"ס",
+                reign: "7 ימים",
+                description: "מלך ישראל, מלך שבעה ימים בלבד",
+                details: "זמרי, שר המחצית מרכב אלה, הרג את אלה והשמיד את כל בית בעשא. כשהעם שמע על המרד, הכתיר את עמרי שר הצבא למלך. זמרי נצור בארמון תרצה ושרף את עצמו בארמון המלך.",
+                achievements: ["חיסל את שושלת בעשא"]
+            },
+            {
+                name: "עמרי",
+                kingdom: "israel",
+                period: "885-874 לפנה\"ס",
+                reign: "12 שנה",
+                description: "מלך ישראל, בונה שומרון",
+                details: "עמרי, שר צבא אלה, נבחר למלך על ידי העם אחרי מות זמרי. נלחם עם תבני בן גינת על המלכות וניצח. קנה את הר שומרון משמר ובנה עליו עיר חדשה שהפכה לבירת ישראל. חיזק את ממלכת ישראל אך המשיך בעבודה זרה.",
+                achievements: ["בנה את שומרון", "חיזק את ממלכת ישראל", "יצר יציבות פוליטית"]
+            },
+            {
+                name: "אחאב",
+                kingdom: "israel",
+                period: "874-853 לפנה\"ס",
+                reign: "22 שנה",
+                description: "מלך ישראל, נלחם עם אליהו הנביא",
+                details: "אחאב בן עמרי, נשא את איזבל בת מלך צידון והביא עבודת הבעל לישראל. בנה בית לבעל בשומרון ועשה אשרה. אליהו הנביא נלחם בו ובנביאי הבעל. למרות כוחו הצבאי, נפל במלחמה ברמות גלעד נגד ארם.",
+                achievements: ["חיזק את הצבא", "בנה ערים", "פיתח את הכלכלה"]
+            },
+            {
+                name: "יהורם (יהודה)",
+                kingdom: "judah",
+                period: "848-841 לפנה\"ס",
+                reign: "8 שנה",
+                description: "מלך יהודה, נשא את בת אחאב",
+                details: "יהורם בן יהושפט, נשא את עתליה בת אחאב והביא עבודה זרה ליהודה. הרג את כל אחיו למען המלכות. בתקופתו מרד אדום ולבנה, והפלשתים והערבים פשטו על יהודה. מת במחלה קשה כפי שניבא אליהו.",
+                achievements: ["שמר על עצמאות יהודה"]
+            },
+            {
+                name: "אחזיה (ישראל)",
+                kingdom: "israel",
+                period: "853-852 לפנה\"ס",
+                reign: "2 שנה",
+                description: "מלך ישראל, בן אחאב ואיזבל",
+                details: "אחזיה בן אחאב, המשיך בדרכי אביו ואמו איזבל. נפל דרך השבכה בעליית ארמונו בשומרון ונפצע קשה. שלח לדרוש בבעל זבוב אלהי עקרון, אך אליהו הנביא גער בו. מת בלא בן ואחיו יהורם מלך תחתיו.",
+                achievements: ["המשיך את מדיניות אביו"]
+            },
+            {
+                name: "יהורם (ישראל)",
+                kingdom: "israel",
+                period: "852-841 לפנה\"ס",
+                reign: "12 שנה",
+                description: "מלך ישראל, אח אחזיה",
+                details: "יהורם בן אחאב, הסיר את מצבת הבעל שעשה אביו אך לא הסיר את עגלי הזהב. נלחם עם מואב ועם ארם. בתקופתו פעל אלישע הנביא ועשה נסים רבים. נרצח על ידי יהוא בן נמשי בכרם נבות היזרעאלי.",
+                achievements: ["הסיר את מצבת הבעל", "נלחם נגד מואב"]
+            },
+            {
+                name: "אחזיה (יהודה)",
+                kingdom: "judah",
+                period: "841 לפנה\"ס",
+                reign: "1 שנה",
+                description: "מלך יהודה, נרצח על ידי יהוא",
+                details: "אחזיה בן יהורם ועתליה, מלך בן 22 שנה. הלך בדרכי בית אחאב כי אמו עתליה הייתה מבית אחאב. יצא עם יהורם מלך ישראל למלחמה נגד חזאל מלך ארם. נרצח על ידי יהוא בן נמשי יחד עם יהורם.",
+                achievements: ["ניסה לשמור על ברית עם ישראל"]
+            },
+            {
+                name: "יהוא",
+                kingdom: "israel",
+                period: "841-814 לפנה\"ס",
+                reign: "28 שנה",
+                description: "מלך ישראל, חיסל את בית אחאב",
+                details: "יהוא בן נמשי, נמשח למלך על ידי תלמיד אלישע. חיסל את כל בית אחאב כולל איזבל, והרג את כל נביאי הבעל. טיהר את ישראל מעבודת הבעל אך לא הסיר את עגלי הזהב. בתקופתו החל חזאל מלך ארם לכבוש שטחים מישראל.",
+                achievements: ["חיסל את בית אחאב", "הרג את נביאי הבעל", "טיהר מעבודת הבעל"]
+            },
+            {
+                name: "עתליה",
+                kingdom: "judah",
+                period: "841-835 לפנה\"ס",
+                reign: "6 שנה",
+                description: "מלכת יהודה, השמידה את זרע המלוכה",
+                details: "עתליה בת אחאב, אם אחזיה מלך יהודה. אחרי מות בנה השמידה את כל זרע המלוכה וגזלה את המלכות. יהושבע בת המלך הצילה את יואש בן אחזיה והחביאה אותו בבית המקדש. אחרי שש שנים הכתיר יהוידע הכהן את יואש ועתליה נהרגה.",
+                achievements: ["שלטה כמלכה יחידה ביהודה"]
+            },
+            {
+                name: "יואש (יהודה)",
+                kingdom: "judah",
+                period: "835-796 לפנה\"ס",
+                reign: "40 שנה",
+                description: "מלך יהודה, חידש את בית המקדש",
+                details: "יואש בן אחזיה, ניצל מעתליה והוכתר בגיל 7. בהדרכת יהוידע הכהן עשה הישר בעיני ה' וחידש את בית המקדש. אחרי מות יהוידע הושפע משרי יהודה וחזר לעבודה זרה. הרג את זכריה בן יהוידע ובסוף נרצח על ידי עבדיו.",
+                achievements: ["חידש את בית המקדש", "הסיר את עבודת הבעל"]
+            },
+            {
+                name: "יהואחז",
+                kingdom: "israel",
+                period: "814-798 לפנה\"ס",
+                reign: "17 שנה",
+                description: "מלך ישראל, בן יהוא",
+                details: "יהואחז בן יהוא, המשיך בחטאי ירבעם ולא הסיר את עגלי הזהב. בתקופתו דיכא חזאל מלך ארם את ישראל מאוד והשאיר לו צבא קטן מאוד. בסוף ימיו התחנן לה' וה' שלח מושיע לישראל.",
+                achievements: ["שמר על עצמאות ישראל למרות הלחץ"]
+            },
+            {
+                name: "יואש (ישראל)",
+                kingdom: "israel",
+                period: "798-782 לפנה\"ס",
+                reign: "16 שנה",
+                description: "מלך ישראל, ניצח את יהודה",
+                details: "יואש בן יהואחז, חיזק את ישראל אחרי תקופת החולשה. ביקר את אלישע הנביא לפני מותו וקיבל ממנו ברכה לניצחון על ארם. ניצח את ארם שלוש פעמים והחזיר ערים לישראל. נלחם עם אמציה מלך יהודה וניצח אותו.",
+                achievements: ["ניצח את ארם", "החזיר ערים לישראל", "ניצח את יהודה"]
+            },
+            {
+                name: "אמציה",
+                kingdom: "judah",
+                period: "796-767 לפנה\"ס",
+                reign: "29 שנה",
+                description: "מלך יהודה, ניצח את אדום",
+                details: "אמציה בן יואש, עשה הישר בעיני ה' אך לא בלבב שלם. הרג את רוצחי אביו אך לא את בניהם. ניצח את אדום בגיא המלח אך לקח את אלהיהם. התגרה ביואש מלך ישראל ונוצח בבית שמש. נרצח בלכיש על ידי קושרים.",
+                achievements: ["ניצח את אדום", "הרג את רוצחי אביו"]
+            },
+            {
+                name: "ירבעם השני",
+                kingdom: "israel",
+                period: "782-753 לפנה\"ס",
+                reign: "41 שנה",
+                description: "מלך ישראל, הרחיב את הגבולות",
+                details: "ירבעם השני בן יואש, המלך החזק ביותר של ישראל אחרי הפיצול. החזיר את גבול ישראל מלבו חמת עד ים הערבה כפי שניבא יונה בן אמתי. בתקופתו פרחה ישראל כלכלית אך גם גברה העוולה החברתית. עמוס והושע ניבאו בתקופתו.",
+                achievements: ["הרחיב את גבולות ישראל", "הביא שגשוג כלכלי", "חיזק את הצבא"]
+            },
+            {
+                name: "עזיה (עוזיהו)",
+                kingdom: "judah",
+                period: "767-740 לפנה\"ס",
+                reign: "52 שנה",
+                description: "מלך יהודה, בנה ופיתח",
+                details: "עזיה בן אמציה, מלך 52 שנה והיה מהמלכים החזקים ביהודה. כבש את אילת, ניצח את הפלשתים והערבים, ובנה ערים רבות. פיתח חקלאות וחיזק את הצבא. בסוף ימיו התגאה ונכנס לבית המקדש להקטיר קטורת ונצרע.",
+                achievements: ["כבש את אילת", "ניצח את הפלשתים", "פיתח חקלאות", "חיזק את הצבא"]
+            },
+            {
+                name: "זכריה",
+                kingdom: "israel",
+                period: "753 לפנה\"ס",
+                reign: "6 חודשים",
+                description: "מלך ישראל, נרצח על ידי שלום",
+                details: "זכריה בן ירבעם השני, המלך האחרון משושלת יהוא. מלך רק שישה חודשים ונרצח על ידי שלום בן יבש לעיני העם. עמו הסתיימה שושלת יהוא שמלכה 102 שנה, כפי שהבטיח ה' ליהוא על חיסול בית אחאב.",
+                achievements: ["סיים את שושלת יהוא"]
+            },
+            {
+                name: "שלום",
+                kingdom: "israel",
+                period: "753 לפנה\"ס",
+                reign: "חודש אחד",
+                description: "מלך ישראל, מלך חודש אחד",
+                details: "שלום בן יבש, הרג את זכריה ומלך חודש אחד בלבד. נרצח על ידי מנחם בן גדי שעלה מתרצה. תקופתו מסמלת את תחילת התקופה הכאוטית האחרונה של ממלכת ישראל.",
+                achievements: ["חיסל את שושלת יהוא"]
+            },
+            {
+                name: "מנחם",
+                kingdom: "israel",
+                period: "753-742 לפנה\"ס",
+                reign: "10 שנה",
+                description: "מלך ישראל, שילם מס לאשור",
+                details: "מנחם בן גדי, הרג את שלום ומלך בשומרון. בתקופתו עלה פול (תגלת פלאסר השלישי) מלך אשור על הארץ. מנחם שילם לו אלף כיכר כסף כדי לחזק את מלכותו, וגבה את הכסף מעשירי ישראל.",
+                achievements: ["שמר על עצמאות ישראל בתשלום מס"]
+            },
+            {
+                name: "יותם",
+                kingdom: "judah",
+                period: "740-732 לפנה\"ס",
+                reign: "16 שנה",
+                description: "מלך יהודה, בנה ופיתח",
+                details: "יותם בן עזיה, מלך צדיק שעשה הישר בעיני ה'. בנה את שער בית המקדש העליון, ערים בהר יהודה, וביראות ומגדלים ביערים. ניצח את בני עמון וגבה מהם מס. בימיו החל ה' לשלח על יהודה את רצין מלך ארם ופקח מלך ישראל.",
+                achievements: ["בנה את שער בית המקדש העליון", "ניצח את עמון", "פיתח בנייה"]
+            },
+            {
+                name: "פקחיה",
+                kingdom: "israel",
+                period: "742-740 לפנה\"ס",
+                reign: "2 שנה",
+                description: "מלך ישראל, נרצח על ידי פקח",
+                details: "פקחיה בן מנחם, המשיך בדרכי אביו הרעות. מלך שנתיים בלבד ונרצח על ידי פקח בן רמליהו, שליש שלו, בארמון בית המלך בשומרון יחד עם ארגוב ואריה.",
+                achievements: ["המשיך את מדיניות אביו"]
+            },
+            {
+                name: "פקח",
+                kingdom: "israel",
+                period: "740-732 לפנה\"ס",
+                reign: "20 שנה",
+                description: "מלך ישראל, נלחם עם יהודה",
+                details: "פקח בן רמליהו, הרג את פקחיה ומלך תחתיו. יצר ברית עם רצין מלך ארם נגד יהודה ועלו על ירושלים בימי אחז. בתקופתו בא תגלת פלאסר מלך אשור ולקח את גליל ואת גלעד והגלה את תושביהם. נרצח על ידי הושע בן אלה.",
+                achievements: ["יצר ברית עם ארם", "נלחם נגד יהודה"]
+            },
+            {
+                name: "אחז",
+                kingdom: "judah",
+                period: "732-716 לפנה\"ס",
+                reign: "16 שנה",
+                description: "מלך יהודה, הביא עבודה זרה",
+                details: "אחז בן יותם, מלך רע שלא הלך בדרכי דוד אביו. העביר את בנו באש והקריב בבמות. כשרצין ופקח צרו על ירושלים, פנה לתגלת פלאסר מלך אשור. הביא עבודה זרה מדמשק ושינה את כלי בית המקדש.",
+                achievements: ["הציל את יהודה מרצין ופקח"]
+            },
+            {
+                name: "הושע",
+                kingdom: "israel",
+                period: "732-722 לפנה\"ס",
+                reign: "9 שנה",
+                description: "מלך ישראל האחרון",
+                details: "הושע בן אלה, המלך האחרון של ישראל. הרג את פקח ומלך תחתיו. בתחילה שילם מס לשלמנאסר מלך אשור, אך אחר כך מרד ופנה למצרים. שלמנאסר צר על שומרון שלוש שנים, וסרגון השני כבש אותה והגלה את ישראל לאשור ב-722 לפנה\"ס.",
+                achievements: ["המלך האחרון של ישראל"]
+            },
+            {
+                name: "חזקיהו",
+                kingdom: "judah",
+                period: "716-687 לפנה\"ס",
+                reign: "29 שנה",
+                description: "מלך צדיק, ניצח את אשור",
+                details: "חזקיהו בן אחז, מלך צדיק שעשה הישר בעיני ה' כדוד אביו. הסיר את הבמות ושבר את המצבות והאשרים, ואף את נחש הנחושת שעשה משה. מרד באשור וניצח את הפלשתים. כשסנחריב מלך אשור צר על ירושלים, התפלל לה' ומלאך ה' הכה במחנה אשור.",
+                achievements: ["הסיר את הבמות", "ניצח את סנחריב", "חפר את בריכת השילוח", "חיזק את יהודה"]
+            },
+            {
+                name: "מנשה",
+                kingdom: "judah",
+                period: "687-642 לפנה\"ס",
+                reign: "55 שנה",
+                description: "מלך יהודה, הביא עבודה זרה",
+                details: "מנשה בן חזקיהו, מלך 55 שנה - הכי הרבה מכל מלכי יהודה. עשה הרע בעיני ה' והחזיר את כל העבודה זרה שאביו הסיר. בנה מזבחות לכל צבא השמים בבית המקדש והעביר את בנו באש. אחר כך שב בתשובה כשהיה בשבי באשור.",
+                achievements: ["מלך הכי הרבה שנים", "שב בתשובה בסוף ימיו"]
+            },
+            {
+                name: "אמון",
+                kingdom: "judah",
+                period: "642-640 לפנה\"ס",
+                reign: "2 שנה",
+                description: "מלך יהודה, נרצח על ידי עבדיו",
+                details: "אמון בן מנשה, עשה הרע בעיני ה' כאביו מנשה אך לא שב בתשובה כמוהו. הרבה להאשים יותר מאביו. מלך שנתיים בלבד ונרצח על ידי עבדיו בביתו. עם הארץ הרג את כל הקושרים והמליך את יאשיהו בנו.",
+                achievements: ["המשיך את מדיניות אביו"]
+            },
+            {
+                name: "יאשיהו",
+                kingdom: "judah",
+                period: "640-609 לפנה\"ס",
+                reign: "31 שנה",
+                description: "מלך צדיק, חידש את התורה",
+                details: "יאשיהו בן אמון, מלך צדיק שעשה הישר בעיני ה' כדוד אביו. בשנה ה-18 למלכותו נמצא ספר התורה בבית המקדש על ידי חלקיהו הכהן. עשה רפורמה דתית גדולה, הסיר את כל העבודה זרה וחידש את חג הפסח. נהרג במגידו במלחמה נגד פרעה נכו.",
+                achievements: ["חידש את התורה", "עשה רפורמה דתית", "חידש את חג הפסח", "הסיר עבודה זרה"]
+            },
+            {
+                name: "יהואחז",
+                kingdom: "judah",
+                period: "609 לפנה\"ס",
+                reign: "3 חודשים",
+                description: "מלך יהודה, הוגלה למצרים",
+                details: "יהואחז בן יאשיהו, מלך שלושה חודשים בלבד. עשה הרע בעיני ה' כאבותיו. פרעה נכו אסר אותו ברבלה בארץ חמת והגלה אותו למצרים, והטיל על הארץ מס כבד. המליך את אליקים אחיו תחתיו ושינה את שמו ליהויקים.",
+                achievements: ["מלך זמן קצר מאוד"]
+            },
+            {
+                name: "יהויקים",
+                kingdom: "judah",
+                period: "609-598 לפנה\"ס",
+                reign: "11 שנה",
+                description: "מלך יהודה, מרד בבבל",
+                details: "יהויקים בן יאשיהו (אליקים), הומלך על ידי פרעה נכו ושילם לו מס כבד. עשה הרע בעיני ה' ורדף את הנביאים. כשנבוכדנצר עלה, היה עבדו שלוש שנים ואחר כך מרד בו. ירמיהו הנביא ניבא נגדו. מת בזמן מצור בבל על ירושלים.",
+                achievements: ["שילם מס למצרים ולבבל"]
+            },
+            {
+                name: "יהויכין",
+                kingdom: "judah",
+                period: "598 לפנה\"ס",
+                reign: "3 חודשים",
+                description: "מלך יהודה, הוגלה לבבל",
+                details: "יהויכין בן יהויקים, מלך בגיל 18 שלושה חודשים ועשרה ימים. עשה הרע בעיני ה' כאביו. נבוכדנצר מלך בבל עלה על ירושלים ויהויכין יצא אליו עם אמו ועבדיו. הוגלה לבבל עם אלפי יהודים בגלות הראשונה.",
+                achievements: ["הוגלה בגלות הראשונה"]
+            },
+            {
+                name: "צדקיהו",
+                kingdom: "judah",
+                period: "598-586 לפנה\"ס",
+                reign: "11 שנה",
+                description: "מלך יהודה האחרון",
+                details: "צדקיהו בן יאשיהו (מתניה), המלך האחרון של יהודה. הומלך על ידי נבוכדנצר אחרי גלות יהויכין. עשה הרע בעיני ה' ולא השפיל את לבבו מפני ירמיהו הנביא. מרד בבבל למרות אזהרות ירמיהו. נבוכדנצר כבש את ירושלים, החריב את בית המקדש והגלה את העם לבבל.",
+                achievements: ["המלך האחרון של יהודה"]
+            }
+        ];
+
+        // Game questions
+        const questions = {
+            easy: [
+                {
+                    question: "מי היה המלך הראשון של ישראל?",
+                    answers: ["שאול", "דוד", "שלמה", "שמואל"],
+                    correct: 0,
+                    explanation: "שאול בן קיש מבנימין היה המלך הראשון של ישראל, נבחר על ידי הנביא שמואל."
+                },
+                {
+                    question: "איזה מלך בנה את בית המקדש הראשון?",
+                    answers: ["דוד", "שלמה", "חזקיהו", "יאשיהו"],
+                    correct: 1,
+                    explanation: "שלמה המלך בנה את בית המקדש הראשון בירושלים, כפי שתכנן אביו דוד."
+                },
+                {
+                    question: "מי כבש את ירושלים והפך אותה לבירת ישראל?",
+                    answers: ["שאול", "דוד", "שלמה", "יהושפט"],
+                    correct: 1,
+                    explanation: "דוד המלך כבש את ירושלים מהיבוסים והפך אותה לבירת ישראל - 'עיר דוד'."
+                },
+                {
+                    question: "איזה מלך היה ידוע בחכמתו?",
+                    answers: ["דוד", "שלמה", "חזקיהו", "יאשיהו"],
+                    correct: 1,
+                    explanation: "שלמה המלך היה ידוע בחכמתו הגדולה, כתב משלים וקהלת ושיר השירים."
+                },
+                {
+                    question: "מתי התפצלה הממלכה לשתיים?",
+                    answers: ["אחרי מות שאול", "אחרי מות דוד", "אחרי מות שלמה", "אחרי מות יהושפט"],
+                    correct: 2,
+                    explanation: "אחרי מות שלמה, בתקופת רחבעם בנו, התפצלה הממלכה לישראל ויהודה."
+                },
+                {
+                    question: "מי היה המלך הראשון של ממלכת ישראל הצפונית?",
+                    answers: ["רחבעם", "ירבעם", "אסא", "בעשא"],
+                    correct: 1,
+                    explanation: "ירבעם בן נבט היה המלך הראשון של ממלכת ישראל הצפונית אחרי הפיצול."
+                },
+                {
+                    question: "איזה מלך הקים עגלי זהב בדן ובבית אל?",
+                    answers: ["ירבעם", "אחאב", "יהוא", "מנחם"],
+                    correct: 0,
+                    explanation: "ירבעם הראשון הקים עגלי זהב בדן ובבית אל כדי למנוע מהעם לעלות לירושלים."
+                },
+                {
+                    question: "מי הייתה המלכה הרעה שהשמידה את זרע המלוכה?",
+                    answers: ["איזבל", "עתליה", "מיכל", "אביגיל"],
+                    correct: 1,
+                    explanation: "עתליה, אם אחזיה מלך יהודה, השמידה את כל זרע המלוכה אחרי מות בנה."
+                },
+                {
+                    question: "איזה מלך ניצח את גלית הפלשתי?",
+                    answers: ["שאול", "דוד", "יונתן", "אבנר"],
+                    correct: 1,
+                    explanation: "דוד הרועה הצעיר ניצח את גלית הפלשתי בעמק האלה עם קלע ואבן."
+                },
+                {
+                    question: "מי היה המלך האחרון של ממלכת יהודה?",
+                    answers: ["יהויכין", "צדקיהו", "יהויקים", "יאשיהו"],
+                    correct: 1,
+                    explanation: "צדקיהו היה המלך האחרון של יהודה, בתקופתו נחרב בית המקדש והעם הוגלה לבבל."
+                }
+            ],
+            medium: [
+                {
+                    question: "איזה נביא נלחם עם אחאב המלך ונביאי הבעל?",
+                    answers: ["אלישע", "אליהו", "ישעיהו", "ירמיהו"],
+                    correct: 1,
+                    explanation: "אליהו הנביא נלחם עם אחאב ואיזבל ונביאי הבעל, והוכיח בהר הכרמל שה' הוא האלהים."
+                },
+                {
+                    question: "איזה מלך חפר את מנהרת השילוח?",
+                    answers: ["דוד", "שלמה", "חזקיהו", "יאשיהו"],
+                    correct: 2,
+                    explanation: "חזקיהו המלך חפר את מנהרת השילוח כדי להביא מים לירושלים בזמן מצור."
+                },
+                {
+                    question: "מי היה המלך שמלך הכי הרבה שנים ביהודה?",
+                    answers: ["דוד", "שלמה", "מנשה", "עזיה"],
+                    correct: 2,
+                    explanation: "מנשה מלך 55 שנה - הכי הרבה מכל מלכי יהודה, אך עשה הרע בעיני ה'."
+                },
+                {
+                    question: "איזה מלך נמצא בתקופתו ספר התורה בבית המקדש?",
+                    answers: ["חזקיהו", "יאשיהו", "אסא", "יהושפט"],
+                    correct: 1,
+                    explanation: "בתקופת יאשיהו נמצא ספר התורה בבית המקדש על ידי חלקיהו הכהן."
+                },
+                {
+                    question: "מי חיסל את בית אחאב והרג את איזבל?",
+                    answers: ["אלישע", "יהוא", "יהושפט", "חזאל"],
+                    correct: 1,
+                    explanation: "יהוא בן נמשי חיסל את כל בית אחאב כולל איזבל, כפי שציווה ה' על ידי אליהו."
+                },
+                {
+                    question: "איזה מלך בנה את שומרון?",
+                    answers: ["אחאב", "עמרי", "יהוא", "ירבעם"],
+                    correct: 1,
+                    explanation: "עמרי קנה את הר שומרון משמר ובנה עליו עיר שהפכה לבירת ממלכת ישראל."
+                },
+                {
+                    question: "מי היה המלך שהרחיב את גבולות ישראל מלבו חמת עד ים הערבה?",
+                    answers: ["ירבעם הראשון", "ירבעם השני", "יואש", "יהואחז"],
+                    correct: 1,
+                    explanation: "ירבעם השני הרחיב את גבולות ישראל מלבו חמת עד ים הערבה, כפי שניבא יונה בן אמתי."
+                },
+                {
+                    question: "איזה מלך נצרע כי נכנס לבית המקדש להקטיר קטורת?",
+                    answers: ["אחז", "עזיה", "מנשה", "אמון"],
+                    correct: 1,
+                    explanation: "עזיה (עוזיהו) נצרע כי התגאה ונכנס לבית המקדש להקטיר קטורת, מה שמותר רק לכהנים."
+                },
+                {
+                    question: "מי היה המלך האחרון של ממלכת ישראל?",
+                    answers: ["פקח", "הושע", "זכריה", "שלום"],
+                    correct: 1,
+                    explanation: "הושע בן אלה היה המלך האחרון של ישראל, בתקופתו נכבשה שומרון והעם הוגלה לאשור."
+                },
+                {
+                    question: "איזה מלך מת במחלה קשה אחרי שהרג את אחיו?",
+                    answers: ["יהורם", "אחזיה", "יואש", "אמציה"],
+                    correct: 0,
+                    explanation: "יהורם בן יהושפט הרג את כל אחיו ומת במחלה קשה כפי שניבא אליהו הנביא."
+                }
+            ],
+            hard: [
+                {
+                    question: "כמה ימים מלך זמרי בישראל?",
+                    answers: ["7 ימים", "7 חודשים", "7 שנים", "חודש אחד"],
+                    correct: 0,
+                    explanation: "זמרי מלך רק 7 ימים בישראל, ואז שרף את עצמו בארמון כשעמרי צר עליו."
+                },
+                {
+                    question: "איזה מלך שילם אלף כיכר כסף לפול מלך אשור?",
+                    answers: ["הושע", "מנחם", "פקח", "פקחיה"],
+                    correct: 1,
+                    explanation: "מנחם שילם אלף כיכר כסף לפול (תגלת פלאסר) מלך אשור כדי לחזק את מלכותו."
+                },
+                {
+                    question: "מי היה הנביא שניבא לירבעם הראשון על המלכות?",
+                    answers: ["אליהו", "אלישע", "אחיה השילוני", "יהוא בן חנני"],
+                    correct: 2,
+                    explanation: "אחיה השילוני ניבא לירבעם על המלכות וגם על חורבן בית ירבעם בגלל חטא העגלים."
+                },
+                {
+                    question: "איזה מלך ניצח את זרח הכושי?",
+                    answers: ["אסא", "יהושפט", "עזיה", "חזקיהו"],
+                    correct: 0,
+                    explanation: "אסא מלך יהודה ניצח את זרח הכושי ואת צבאו הגדול בעזרת ה' בגרר."
+                },
+                {
+                    question: "מי הציל את יואש מעתליה?",
+                    answers: ["יהוידע הכהן", "יהושבע", "נתן הנביא", "אביתר הכהן"],
+                    correct: 1,
+                    explanation: "יהושבע בת המלך יהורם הצילה את יואש התינוק מעתליה והחביאה אותו בבית המקדש."
+                },
+                {
+                    question: "איזה מלך הרג את זכריה בן יהוידע בחצר בית המקדש?",
+                    answers: ["יואש", "אמציה", "עזיה", "אחז"],
+                    correct: 0,
+                    explanation: "יואש מלך יהודה הרג את זכריה בן יהוידע הכהן בחצר בית המקדש, למרות שיהוידע הציל אותו."
+                },
+                {
+                    question: "איזה מלך נהרג במגידו במלחמה נגד פרעה נכו?",
+                    answers: ["יאשיהו", "יהויקים", "יהואחז", "צדקיהו"],
+                    correct: 0,
+                    explanation: "יאשיהו המלך הצדיק נהרג במגידו כשניסה לעצור את פרעה נכו ממצרים."
+                },
+                {
+                    question: "מי היה המלך שמלך רק 3 חודשים ו-10 ימים?",
+                    answers: ["יהואחז", "יהויכין", "זכריה", "שלום"],
+                    correct: 1,
+                    explanation: "יהויכין מלך רק 3 חודשים ו-10 ימים לפני שהוגלה לבבל על ידי נבוכדנצר."
+                },
+                {
+                    question: "איזה מלך בנה את הרמה כדי לחסום את הגישה לירושלים?",
+                    answers: ["ירבעם", "בעשא", "אחאב", "עמרי"],
+                    correct: 1,
+                    explanation: "בעשא מלך ישראל בנה את הרמה כדי לחסום את הגישה לירושלים ולמנוע מאנשיו לעלות לשם."
+                },
+                {
+                    question: "כמה שנים מלכה שושלת יהוא בישראל?",
+                    answers: ["100 שנה", "102 שנה", "110 שנה", "95 שנה"],
+                    correct: 1,
+                    explanation: "שושלת יהוא מלכה 102 שנה בישראל (יהוא, יהואחז, יואש, ירבעם השני, זכריה)."
+                }
+            ]
+        };
+
+        // Game state
+        let currentGame = {
+            questionIndex: 0,
+            score: 0,
+            lifelines: {
+                fifty: true,
+                audience: true,
+                phone: true
+            },
+            currentQuestions: [],
+            selectedAnswer: null,
+            playerName: '',
+            gameResults: []
+        };
+
+        // Sound effects using Web Audio API
+        function playSound(frequency, duration, type = 'sine') {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            } catch (e) {
+                // Fallback - no sound if Web Audio API is not supported
+                console.log('Sound not supported');
+            }
+        }
+
+        function playCorrectSound() {
+            // Happy ascending notes
+            playSound(523, 0.2); // C
+            setTimeout(() => playSound(659, 0.2), 100); // E
+            setTimeout(() => playSound(784, 0.3), 200); // G
+        }
+
+        function playWrongSound() {
+            // Sad descending notes
+            playSound(400, 0.3, 'sawtooth');
+            setTimeout(() => playSound(300, 0.4, 'sawtooth'), 150);
+        }
+
+        function playWinSound() {
+            // Victory fanfare
+            playSound(523, 0.2);
+            setTimeout(() => playSound(659, 0.2), 100);
+            setTimeout(() => playSound(784, 0.2), 200);
+            setTimeout(() => playSound(1047, 0.4), 300);
+        }
+
+        const moneyLadder = [
+            "₪1,000", "₪2,000", "₪3,000", "₪5,000", "₪10,000",
+            "₪20,000", "₪40,000", "₪80,000", "₪160,000", "₪1,000,000"
+        ];
+
+        // Initialize the app
+        function init() {
+            showTimeline();
+            populateTimeline();
+            createFloatingParticles();
+        }
+
+        // Create floating particles background
+        function createFloatingParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size between 2-8px
+                const size = Math.random() * 6 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // Random animation delay
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                
+                container.appendChild(particle);
+            }
+            
+            // Add some sparkles
+            for (let i = 0; i < 10; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(sparkle);
+            }
+        }
+
+        // Show timeline section
+        function showTimeline() {
+            document.getElementById('timeline-section').classList.remove('hidden');
+            document.getElementById('game-section').classList.add('hidden');
+            updateNavButtons('timeline');
+        }
+
+        // Show game section
+        function showGame() {
+            document.getElementById('timeline-section').classList.add('hidden');
+            document.getElementById('game-section').classList.remove('hidden');
+            document.getElementById('player-setup').classList.remove('hidden');
+            document.getElementById('game-start').classList.add('hidden');
+            document.getElementById('game-play').classList.add('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            updateNavButtons('game');
+        }
+
+        // Update navigation buttons
+        function updateNavButtons(active) {
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'bg-purple-600');
+                if (active === 'timeline' && btn.textContent.includes('ציר הזמן')) {
+                    btn.classList.add('bg-blue-600');
+                } else if (active === 'game' && btn.textContent.includes('משחק')) {
+                    btn.classList.add('bg-purple-600');
+                } else {
+                    btn.classList.add(btn.textContent.includes('ציר הזמן') ? 'bg-blue-500' : 'bg-purple-500');
+                }
+            });
+        }
+
+        // Populate timeline with kings
+        function populateTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            kings.forEach((king, index) => {
+                const kingCard = document.createElement('div');
+                kingCard.className = `king-card mb-8 ${index % 2 === 0 ? 'text-right' : 'text-left'}`;
+                
+                const cardClass = king.kingdom === 'israel' ? 'israel-gradient' : 
+                                 king.kingdom === 'judah' ? 'judah-gradient' : 'gold-gradient';
+                
+                const kingdomIcon = king.kingdom === 'israel' ? '🔵' : 
+                                   king.kingdom === 'judah' ? '🔴' : '👑';
+
+                kingCard.innerHTML = `
+                    <div class="flex ${index % 2 === 0 ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-md">
+                            <div class="${cardClass} text-white p-6 rounded-xl shadow-lg card-hover cursor-pointer" onclick="showKingDetails('${king.name}')">
+                                <div class="flex items-center ${index % 2 === 0 ? 'justify-end' : 'justify-start'} mb-3">
+                                    <span class="text-2xl ml-2">${kingdomIcon}</span>
+                                    <h3 class="text-2xl font-bold">${king.name}</h3>
+                                </div>
+                                <p class="text-lg opacity-90 mb-2">${king.period}</p>
+                                <p class="opacity-80">${king.description}</p>
+                                <div class="mt-4 text-sm opacity-75">
+                                    <span>👑 ${king.reign}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(kingCard);
+            });
+        }
+
+        // Show king details modal
+        function showKingDetails(kingName) {
+            const king = kings.find(k => k.name === kingName);
+            if (!king) return;
+
+            const modal = document.getElementById('king-modal');
+            const modalTitle = document.getElementById('modal-king-name');
+            const modalContent = document.getElementById('modal-content');
+
+            modalTitle.textContent = king.name;
+            
+            const kingdomName = king.kingdom === 'israel' ? 'ממלכת ישראל' : 
+                              king.kingdom === 'judah' ? 'ממלכת יהודה' : 'הממלכה המאוחדת';
+            
+            const kingdomClass = king.kingdom === 'israel' ? 'text-blue-600' : 
+                               king.kingdom === 'judah' ? 'text-red-600' : 'text-yellow-600';
+
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <span class="${kingdomClass} font-semibold text-lg">${kingdomName}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-600 mb-2">תקופת שלטון</h4>
+                            <p class="text-lg font-bold">${king.period}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-600 mb-2">משך המלכות</h4>
+                            <p class="text-lg font-bold">${king.reign}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-3">📜 סיפור המלך</h4>
+                        <p class="text-gray-700 leading-relaxed">${king.details}</p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-3">⭐ הישגים עיקריים</h4>
+                        <ul class="space-y-2">
+                            ${king.achievements.map(achievement => 
+                                `<li class="flex items-center text-gray-700">
+                                    <span class="text-green-500 ml-2">✓</span>
+                                    ${achievement}
+                                </li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('fade-in');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('king-modal').classList.add('hidden');
+        }
+
+        // Start game with name validation
+        function startGameWithName() {
+            const playerName = document.getElementById('player-name').value.trim();
+            if (!playerName) {
+                alert('אנא הכניסו את השם שלכם לפני התחלת המשחק');
+                return;
+            }
+            
+            currentGame.playerName = playerName;
+            document.getElementById('welcome-message').textContent = `שלום ${playerName}! מוכנים לבדוק את הידע שלכם?`;
+            
+            document.getElementById('player-setup').classList.add('hidden');
+            document.getElementById('game-start').classList.remove('hidden');
+        }
+
+        // Start game
+        function startGame() {
+            // Reset game state
+            currentGame.questionIndex = 0;
+            currentGame.score = 0;
+            currentGame.lifelines = {
+                fifty: true,
+                audience: true,
+                phone: true
+            };
+            currentGame.currentQuestions = generateQuestions();
+            currentGame.selectedAnswer = null;
+            currentGame.gameResults = [];
+
+            // Show game play screen
+            document.getElementById('game-start').classList.add('hidden');
+            document.getElementById('game-play').classList.remove('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+
+            // Reset lifelines
+            resetLifelines();
+            
+            // Setup money ladder
+            setupMoneyLadder();
+            
+            // Show first question
+            showQuestion();
+        }
+
+        // Generate questions for the game
+        function generateQuestions() {
+            const gameQuestions = [];
+            
+            // Easy questions (1-3)
+            const easyQuestions = [...questions.easy].sort(() => Math.random() - 0.5);
+            gameQuestions.push(...easyQuestions.slice(0, 3));
+            
+            // Medium questions (4-7)
+            const mediumQuestions = [...questions.medium].sort(() => Math.random() - 0.5);
+            gameQuestions.push(...mediumQuestions.slice(0, 4));
+            
+            // Hard questions (8-10)
+            const hardQuestions = [...questions.hard].sort(() => Math.random() - 0.5);
+            gameQuestions.push(...hardQuestions.slice(0, 3));
+            
+            return gameQuestions;
+        }
+
+        // Setup money ladder
+        function setupMoneyLadder() {
+            const ladder = document.getElementById('money-ladder');
+            ladder.innerHTML = '';
+            
+            for (let i = 9; i >= 0; i--) {
+                const step = document.createElement('div');
+                step.className = `p-2 rounded text-center ${i === currentGame.questionIndex ? 'current-question' : ''} ${(i === 4 || i === 9) ? 'safe-haven' : ''}`;
+                step.innerHTML = `<span class="font-bold">${i + 1}.</span> ${moneyLadder[i]}`;
+                ladder.appendChild(step);
+            }
+        }
+
+        // Show current question
+        function showQuestion() {
+            const question = currentGame.currentQuestions[currentGame.questionIndex];
+            
+            document.getElementById('question-number').textContent = `שאלה ${currentGame.questionIndex + 1} מתוך 10`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const answersContainer = document.getElementById('answers-container');
+            answersContainer.innerHTML = '';
+            
+            question.answers.forEach((answer, index) => {
+                const answerBtn = document.createElement('button');
+                answerBtn.className = 'answer-btn bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg transition-colors text-right';
+                answerBtn.innerHTML = `<span class="font-bold">${String.fromCharCode(65 + index)}.</span> ${answer}`;
+                answerBtn.onclick = () => selectAnswer(index);
+                answersContainer.appendChild(answerBtn);
+            });
+            
+            // Reset selected answer
+            currentGame.selectedAnswer = null;
+            document.getElementById('final-answer-btn').disabled = true;
+            
+            // Update money ladder
+            setupMoneyLadder();
+        }
+
+        // Select answer
+        function selectAnswer(index) {
+            // Remove previous selection
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+                btn.classList.remove('bg-yellow-500', 'bg-yellow-600');
+                btn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            });
+            
+            // Highlight selected answer
+            const selectedBtn = document.querySelectorAll('.answer-btn')[index];
+            selectedBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            selectedBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            
+            currentGame.selectedAnswer = index;
+            document.getElementById('final-answer-btn').disabled = false;
+        }
+
+        // Final answer
+        function finalAnswer() {
+            if (currentGame.selectedAnswer === null) return;
+            
+            const question = currentGame.currentQuestions[currentGame.questionIndex];
+            const isCorrect = currentGame.selectedAnswer === question.correct;
+            
+            // Record the result
+            currentGame.gameResults.push({
+                questionNumber: currentGame.questionIndex + 1,
+                question: question.question,
+                userAnswer: question.answers[currentGame.selectedAnswer],
+                correctAnswer: question.answers[question.correct],
+                isCorrect: isCorrect,
+                explanation: question.explanation
+            });
+            
+            // Show correct/wrong animation
+            const answerBtns = document.querySelectorAll('.answer-btn');
+            answerBtns.forEach((btn, index) => {
+                if (index === question.correct) {
+                    btn.className = 'answer-btn answer-correct text-white p-4 rounded-lg text-right';
+                } else if (index === currentGame.selectedAnswer && !isCorrect) {
+                    btn.className = 'answer-btn answer-wrong text-white p-4 rounded-lg text-right';
+                }
+            });
+            
+            // Play sound effect
+            if (isCorrect) {
+                playCorrectSound();
+            } else {
+                playWrongSound();
+            }
+            
+            setTimeout(() => {
+                if (isCorrect) {
+                    currentGame.score = moneyLadder[currentGame.questionIndex];
+                    currentGame.questionIndex++;
+                    
+                    if (currentGame.questionIndex >= 10) {
+                        // Game won!
+                        playWinSound();
+                        endGame(true, "🎉 מזל טוב! זכית במיליון שקל!");
+                    } else {
+                        // Next question
+                        showQuestion();
+                    }
+                } else {
+                    // Game over
+                    let finalScore = "₪0";
+                    if (currentGame.questionIndex >= 5) {
+                        finalScore = "₪20,000"; // Safe haven
+                    }
+                    endGame(false, `😔 תשובה שגויה! התשובה הנכונה היא: ${question.answers[question.correct]}`);
+                }
+            }, 2000);
+        }
+
+        // Show walk away confirmation
+        function showWalkAwayConfirm() {
+            const currentScore = currentGame.questionIndex > 0 ? moneyLadder[currentGame.questionIndex - 1] : "₪0";
+            document.getElementById('walkaway-amount').textContent = currentScore;
+            document.getElementById('walkaway-modal').classList.remove('hidden');
+        }
+
+        // Close walk away modal
+        function closeWalkAwayModal() {
+            document.getElementById('walkaway-modal').classList.add('hidden');
+        }
+
+        // Confirm walk away
+        function confirmWalkAway() {
+            closeWalkAwayModal();
+            const currentScore = currentGame.questionIndex > 0 ? moneyLadder[currentGame.questionIndex - 1] : "₪0";
+            endGame(false, `🚪 בחרת לעזוב עם הכסף. כל הכבוד על המשחק!`);
+        }
+
+        // End game
+        function endGame(won, message) {
+            document.getElementById('game-play').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
+            
+            document.getElementById('game-over-title').textContent = won ? "🎉 מזל טוב!" : "🎯 המשחק הסתיים";
+            document.getElementById('game-over-message').textContent = message;
+            
+            let finalScore = currentGame.score;
+            if (!won && currentGame.questionIndex >= 5) {
+                finalScore = "₪10,000"; // Safe haven
+            } else if (!won && currentGame.questionIndex < 5) {
+                finalScore = "₪0";
+            }
+            
+            document.getElementById('final-score').textContent = `${currentGame.playerName} זכה: ${finalScore}`;
+            
+            // Show game summary
+            showGameSummary();
+        }
+
+        // Show game summary
+        function showGameSummary() {
+            const correctAnswers = currentGame.gameResults.filter(r => r.isCorrect);
+            const wrongAnswers = currentGame.gameResults.filter(r => !r.isCorrect);
+            
+            document.getElementById('correct-count').textContent = correctAnswers.length;
+            document.getElementById('wrong-count').textContent = wrongAnswers.length;
+            
+            // Show correct answers list
+            const correctList = document.getElementById('correct-list');
+            correctList.innerHTML = '';
+            correctAnswers.forEach(result => {
+                const item = document.createElement('div');
+                item.textContent = `שאלה ${result.questionNumber}: ${result.correctAnswer}`;
+                correctList.appendChild(item);
+            });
+            
+            // Show wrong answers list
+            const wrongList = document.getElementById('wrong-list');
+            wrongList.innerHTML = '';
+            wrongAnswers.forEach(result => {
+                const item = document.createElement('div');
+                item.textContent = `שאלה ${result.questionNumber}: ${result.userAnswer}`;
+                wrongList.appendChild(item);
+            });
+            
+            // Show detailed results
+            const detailedResults = document.getElementById('detailed-results');
+            detailedResults.innerHTML = '';
+            currentGame.gameResults.forEach(result => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `p-3 rounded-lg ${result.isCorrect ? 'bg-green-100 border-r-4 border-green-500' : 'bg-red-100 border-r-4 border-red-500'}`;
+                resultDiv.innerHTML = `
+                    <div class="font-bold text-right mb-2">
+                        ${result.isCorrect ? '✅' : '❌'} שאלה ${result.questionNumber}
+                    </div>
+                    <div class="text-sm text-gray-700 text-right mb-2">${result.question}</div>
+                    <div class="text-sm text-right">
+                        <span class="font-semibold">התשובה שלך:</span> ${result.userAnswer}
+                    </div>
+                    ${!result.isCorrect ? `<div class="text-sm text-right">
+                        <span class="font-semibold">התשובה הנכונה:</span> ${result.correctAnswer}
+                    </div>` : ''}
+                    <div class="text-xs text-gray-600 text-right mt-2 italic">${result.explanation}</div>
+                `;
+                detailedResults.appendChild(resultDiv);
+            });
+        }
+
+        // Reset lifelines
+        function resetLifelines() {
+            document.getElementById('lifeline-5050').classList.remove('lifeline-used');
+            document.getElementById('lifeline-audience').classList.remove('lifeline-used');
+            document.getElementById('lifeline-phone').classList.remove('lifeline-used');
+        }
+
+        // Use 50:50 lifeline
+        function use5050() {
+            if (!currentGame.lifelines.fifty) return;
+            
+            currentGame.lifelines.fifty = false;
+            document.getElementById('lifeline-5050').classList.add('lifeline-used');
+            
+            const question = currentGame.currentQuestions[currentGame.questionIndex];
+            const answerBtns = document.querySelectorAll('.answer-btn');
+            
+            // Hide 2 wrong answers
+            const wrongAnswers = [];
+            for (let i = 0; i < 4; i++) {
+                if (i !== question.correct) {
+                    wrongAnswers.push(i);
+                }
+            }
+            
+            // Randomly select 2 wrong answers to hide
+            const toHide = wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 2);
+            
+            toHide.forEach(index => {
+                answerBtns[index].style.opacity = '0.3';
+                answerBtns[index].style.pointerEvents = 'none';
+            });
+        }
+
+        // Use audience lifeline
+        function useAudience() {
+            if (!currentGame.lifelines.audience) return;
+            
+            currentGame.lifelines.audience = false;
+            document.getElementById('lifeline-audience').classList.add('lifeline-used');
+            
+            const question = currentGame.currentQuestions[currentGame.questionIndex];
+            const results = document.getElementById('audience-results');
+            
+            // Generate audience percentages (correct answer gets higher percentage)
+            const percentages = [0, 0, 0, 0];
+            percentages[question.correct] = 40 + Math.random() * 30; // 40-70%
+            
+            let remaining = 100 - percentages[question.correct];
+            for (let i = 0; i < 4; i++) {
+                if (i !== question.correct) {
+                    percentages[i] = Math.random() * remaining / 3;
+                    remaining -= percentages[i];
+                }
+            }
+            
+            // Normalize to 100%
+            const total = percentages.reduce((a, b) => a + b, 0);
+            percentages.forEach((p, i) => percentages[i] = Math.round(p / total * 100));
+            
+            results.innerHTML = '';
+            question.answers.forEach((answer, index) => {
+                const result = document.createElement('div');
+                result.className = 'flex justify-between items-center';
+                result.innerHTML = `
+                    <span>${String.fromCharCode(65 + index)}. ${answer}</span>
+                    <span class="font-bold">${percentages[index]}%</span>
+                `;
+                results.appendChild(result);
+            });
+            
+            document.getElementById('audience-modal').classList.remove('hidden');
+        }
+
+        // Use phone lifeline
+        function usePhone() {
+            if (!currentGame.lifelines.phone) return;
+            
+            currentGame.lifelines.phone = false;
+            document.getElementById('lifeline-phone').classList.add('lifeline-used');
+            
+            const question = currentGame.currentQuestions[currentGame.questionIndex];
+            const advice = document.getElementById('phone-advice');
+            
+            const adviceTexts = [
+                `אני די בטוח שהתשובה היא ${String.fromCharCode(65 + question.correct)}. ${question.answers[question.correct]}.`,
+                `לדעתי זה ${String.fromCharCode(65 + question.correct)}, אבל אני לא בטוח לגמרי...`,
+                `אני חושב שזה ${String.fromCharCode(65 + question.correct)}. זה נשמע הכי הגיוני לי.`,
+                `התשובה צריכה להיות ${String.fromCharCode(65 + question.correct)} - ${question.answers[question.correct]}.`
+            ];
+            
+            advice.textContent = adviceTexts[Math.floor(Math.random() * adviceTexts.length)];
+            document.getElementById('phone-modal').classList.remove('hidden');
+        }
+
+        // Close audience modal
+        function closeAudienceModal() {
+            document.getElementById('audience-modal').classList.add('hidden');
+        }
+
+        // Close phone modal
+        function closePhoneModal() {
+            document.getElementById('phone-modal').classList.add('hidden');
+        }
+
+        // Copy results to clipboard
+        function copyResults() {
+            const correctCount = currentGame.gameResults.filter(r => r.isCorrect).length;
+            const totalQuestions = currentGame.gameResults.length;
+            
+            let finalScore = currentGame.score;
+            if (currentGame.questionIndex < 10 && currentGame.questionIndex >= 5) {
+                finalScore = "₪20,000"; // Safe haven at question 5
+            } else if (currentGame.questionIndex < 5) {
+                finalScore = "₪0";
+            }
+            
+            // Build detailed questions and answers section
+            let questionsDetails = '\n📝 פירוט השאלות:\n';
+            currentGame.gameResults.forEach((result, index) => {
+                const status = result.isCorrect ? '✅' : '❌';
+                questionsDetails += `\n${status} שאלה ${result.questionNumber}:\n`;
+                questionsDetails += `${result.question}\n`;
+                questionsDetails += `התשובה שלי: ${result.userAnswer}\n`;
+                if (!result.isCorrect) {
+                    questionsDetails += `התשובה הנכונה: ${result.correctAnswer}\n`;
+                }
+                if (index < currentGame.gameResults.length - 1) {
+                    questionsDetails += '---\n';
+                }
+            });
+            
+            const shareText = `🎯 משחק "מי רוצה להיות מיליונר" - מלכי ישראל ויהודה
+
+👤 שחקן: ${currentGame.playerName}
+💰 זכיתי: ${finalScore}
+✅ תשובות נכונות: ${correctCount}/${totalQuestions}
+📊 אחוז הצלחה: ${Math.round((correctCount/totalQuestions)*100)}%
+
+${correctCount === 10 ? '🏆 זכיתי במיליון שקל!' : correctCount >= 7 ? '🎉 ביצוע מעולה!' : correctCount >= 5 ? '👍 ביצוע טוב!' : '💪 אפשר להשתפר!'}
+
+${questionsDetails}
+
+🎮 רוצים לנסות גם? בואו לשחק!`;
+            
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('התוצאות הועתקו ללוח! אפשר להדביק ולשתף עם חברים 📋');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('התוצאות הועתקו ללוח! אפשר להדביק ולשתף עם חברים 📋');
+            });
+        }
+
+        // Play again
+        function playAgain() {
+            showGame();
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modals = ['king-modal', 'audience-modal', 'phone-modal', 'walkaway-modal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            // Close modals with Escape key
+            if (event.key === 'Escape') {
+                const modals = ['king-modal', 'audience-modal', 'phone-modal', 'walkaway-modal'];
+                modals.forEach(modalId => {
+                    document.getElementById(modalId).classList.add('hidden');
+                });
+            }
+            
+            // Answer selection with number keys (1-4)
+            if (event.key >= '1' && event.key <= '4') {
+                const gamePlay = document.getElementById('game-play');
+                if (!gamePlay.classList.contains('hidden')) {
+                    const answerIndex = parseInt(event.key) - 1;
+                    selectAnswer(answerIndex);
+                }
+            }
+            
+            // Final answer with Enter key
+            if (event.key === 'Enter') {
+                const gamePlay = document.getElementById('game-play');
+                const finalAnswerBtn = document.getElementById('final-answer-btn');
+                if (!gamePlay.classList.contains('hidden') && !finalAnswerBtn.disabled) {
+                    finalAnswer();
+                }
+            }
+        });
+
+        // Initialize the application when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97fb6b57f2ba7d9e',t:'MTc1Nzk3Mzg2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
